@@ -1,63 +1,42 @@
 // src/context/Provider.js
-
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+// import PropTypes from 'prop-types';
+import React, { useState } from 'react';
 import CarsContext from './CarsContext';
 
-class Provider extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      cars: {
-        red: false,
-        blue: false,
-        yellow: false,
-      },
-      signal: {
-        color: 'red',
-      },
-    }
-    this.moveCar = this.moveCar.bind(this);
-    this.changeSignal = this.changeSignal.bind(this);
-  }
+function Provider({ children }) {
+  const [redCar, setRedCar] = useState(false);
+  const [blueCar, setBlueCar] = useState(false);
+  const [yellowCar, setYellowCar] = useState(false);
+  const [signalColor, setSignalColor] = useState('red');
 
-  moveCar(car, side) {
-    this.setState({
-      cars: {
-        ...this.state.cars,
-        [car]: side,
-      },
-    });
+  function moveCar(car) {
+    if (car === 'redCar') return setRedCar(!redCar);
+    if (car === 'blueCar') return setBlueCar(!blueCar);
+    if (car === 'yellowCar') return setYellowCar(!yellowCar);
   };
 
-  changeSignal(signalColor) {
-    this.setState({
-      signal: {
-        ...this.state.signal,
-        color: signalColor,
-      },
-    });
+  function changeSignal(color) {
+    return setSignalColor(color);
   };
 
-  render() {
-    const context = {
-      ...this.state,
-      moveCar: this.moveCar,
-      changeSignal: this.changeSignal,
-    };
+  const context = {
+    redCar,
+    blueCar,
+    yellowCar,
+    signalColor,
+    moveCar: moveCar,
+    changeSignal: changeSignal,
+  };
 
-    const { children } = this.props;
+  return (
+    <CarsContext.Provider value={context}>
+      {children}
+    </CarsContext.Provider>
+  );
+}
 
-    return (
-      <CarsContext.Provider value={context}>
-        {children}
-      </CarsContext.Provider>
-    );
-  }
-};
-
-Provider.propTypes = {
-  children: PropTypes.node.isRequired,
-};
+// Provider.propTypes = {
+//   children: PropTypes.node.isRequired,
+// };
 
 export default Provider;
